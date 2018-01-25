@@ -142,19 +142,37 @@ function cari($keyword){
 }
 
 function registrasi($data){
-	global $con;
+	global $conn;
 
-	$username = strlower(stripslashes($data["username"]));//stslower untuk huruf kecil, striplesh untuk
-	$password = mysqli_real_escape_string($data["password"]);
-	$password2 = mysqli_real_escape_string($data["password2"]);//agar bisa input karakter back slash
+	$username = strtolower(stripslashes($data["username"]));//stslower untuk huruf kecil, striplesh untuk
+	$password = mysqli_real_escape_string($conn,$data["password"]);
+	$password2 = mysqli_real_escape_string($conn,$data["password2"]);//agar bisa input karakter back slash
+
+
+	// cek username sudah ada atau belum
+	$result = mysqli_query($conn,"SELECT username FROM user WHERE username='$username'");
+	if(mysqli_fetch_assoc($result)) {
+		echo "<script>
+				alert('username sudah terdaftar!!');
+			  </script>";
+			  return false;
+	}
 
 	// cek konfirmasi passsword
-	if($psassword !== $password2){
+	if($password !== $password2){
 		echo "<script>
-				alert('konfirmasi PASSWORD tidak sesuai')
-			   </script>"
+				alert('konfirmasi PASSWORD tidak sesuai');
+			   </script>";
 		return false;
 	}
+
+	// enkripsi password
+	$password = password_hash($password, PASSWORD_DEFAULT); //var_dump($password);die;
+	// tambahkan user bRU KE database
+	mysqli_query($conn,"INSERT INTO user VALUES('','$username','$password')");
+
+	return mysqli_affected_rows($conn);
+
 }
  ?>
 

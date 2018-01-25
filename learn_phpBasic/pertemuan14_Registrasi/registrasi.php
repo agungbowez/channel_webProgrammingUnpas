@@ -7,7 +7,7 @@ require 'functions.php';
 					alert('user baru sudah ditambahkan');
 				  </script>";
 		}else{
-			echo mysqli_error($con);
+			echo mysqli_error($conn);
 		}
 	}
  ?>
